@@ -86,6 +86,8 @@ module VMC::Cli::ManifestHelper
 
     if manifest "framework"
       framework = VMC::Cli::Framework.lookup_by_framework manifest("framework","name")
+    elsif @options[:framework]
+      framework = VMC::Cli::Framework.new(@options[:framework])
     else
       framework = detect_framework
       set framework.name, "framework", "name"

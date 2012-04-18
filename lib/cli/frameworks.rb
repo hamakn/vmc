@@ -35,6 +35,7 @@ module VMC::Cli
         FRAMEWORKS.each do |key,fw|
           return create(fw[0],fw[1]) if fw[0] == name
         end
+        Framework.new(name)
       end
 
       def create(name,opts)
