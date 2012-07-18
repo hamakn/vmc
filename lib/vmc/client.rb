@@ -409,6 +409,10 @@ class VMC::Client
       req[:headers]['X-VCAP-Trace'] = (trace == true ? '22' : trace)
     end
 
+    # Set timeout 300 sec
+    start_at = Time.now
+    req[:timeout] = 300
+
     result = nil
     RestClient::Request.execute(req) do |response, request|
       result = [ response.code, response.body, response.headers ]
@@ -430,6 +434,8 @@ class VMC::Client
         puts '<<<'
       end
     end
+    # info: Print response sec if it's over 30sec
+    puts "INFO: Took #{Time.now - start_at} sec for request" if Time.now - start_at > 30
     result
   rescue Net::HTTPBadResponse => e
     raise BadTarget "Received bad HTTP response from target: #{e}"
