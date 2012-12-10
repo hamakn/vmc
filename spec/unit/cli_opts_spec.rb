@@ -101,4 +101,15 @@ describe 'VMC::Cli::Runner' do
     cli.options[:token_file].should ==  '/tmp/foobar'
   end
 
+  it 'should parse framework override correctly' do
+    cli = VMC::Cli::Runner.new().parse_options!
+    cli.options[:framework].should_not be
+    args = "--framework rails3"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:framework].should == "rails3"
+    args = "-f java_web_resin"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:framework].should == "java_web_resin"
+  end
+
 end

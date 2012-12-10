@@ -91,6 +91,8 @@ class VMC::Cli::Runner
 
       opts.on('--runtime RUNTIME') { |rt|    @options[:runtime] = rt }
 
+      opts.on('-f FRAMEWORK', '--framework FRAMEWORK') { |fw| @options[:framework] = fw }
+
       # deprecated
       opts.on('--exec EXEC')       { |exec|  @options[:exec] = exec }
       opts.on('--noframework')     {         @options[:noframework] = true }
