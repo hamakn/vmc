@@ -22,7 +22,7 @@ class VMC::Client
   end
 
   attr_reader   :target, :host, :user, :proxy, :auth_token
-  attr_accessor :trace
+  attr_accessor :trace, :timeout
 
   # Error codes
   VMC_HTTP_ERROR_CODES = [ 400, 500 ]
@@ -383,6 +383,7 @@ class VMC::Client
       :method => method, :url => "#{@target}/#{path}",
       :payload => payload, :headers => headers, :multipart => true
     }
+    req.merge!({:timeout => @timeout}) if @timeout
     status, body, response_headers = perform_http_request(req)
 
     if request_failed?(status)
@@ -409,6 +410,7 @@ class VMC::Client
       req[:headers]['X-VCAP-Trace'] = (trace == true ? '22' : trace)
     end
 
+    start_at = Time.now
     result = nil
     RestClient::Request.execute(req) do |response, request|
       result = [ response.code, response.body, response.headers ]
@@ -430,6 +432,8 @@ class VMC::Client
         puts '<<<'
       end
     end
+    # info: Print response sec if it's over 30sec
+    puts "INFO: Took #{Time.now - start_at} sec for request" if Time.now - start_at > 30
     result
   rescue Net::HTTPBadResponse => e
     raise BadTarget "Received bad HTTP response from target: #{e}"

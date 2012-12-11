@@ -101,4 +101,11 @@ describe 'VMC::Cli::Runner' do
     cli.options[:token_file].should ==  '/tmp/foobar'
   end
 
+  it 'should parse timeout override correctly' do
+    cli = VMC::Cli::Runner.new().parse_options!
+    cli.options[:timeout].should_not be
+    args = "--timeout 234"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:timeout].should == 234
+  end
 end

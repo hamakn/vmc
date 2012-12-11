@@ -340,6 +340,16 @@ describe 'VMC::Client' do
     expect { client.create_service('mysql', 'foo') }.to raise_error(VMC::Client::TargetError)
   end
 
+  it 'should allow to specify http request timeout' do
+    timeout = 123
+    client = VMC::Client.new
+    client.timeout = timeout
+    client.stub(:check_login_status)
+    client.stub(:request_failed?)
+    RestClient::Request.should_receive(:execute).with(hash_including(:timeout => timeout))
+    client.apps # any request
+  end
+
   # WebMock.allow_net_connect!
 
 end

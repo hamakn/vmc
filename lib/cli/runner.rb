@@ -91,6 +91,13 @@ class VMC::Cli::Runner
 
       opts.on('--runtime RUNTIME') { |rt|    @options[:runtime] = rt }
 
+      opts.on('--timeout TIMEOUT') { |t|
+        if t.to_i > 0
+          @options[:timeout] = t.to_i
+          puts "Set timeout: #{t} sec"
+        end
+      }
+
       # deprecated
       opts.on('--exec EXEC')       { |exec|  @options[:exec] = exec }
       opts.on('--noframework')     {         @options[:noframework] = true }

@@ -852,6 +852,7 @@ module VMC::Cli::Command
       count = log_lines_displayed = 0
       failed = false
       start_time = Time.now.to_i
+      giveup_ticks = @options[:timeout] ? @options[:timeout]/SLEEP_TIME : GIVEUP_TICKS
 
       loop do
         display '.', false unless count > TICKER_TICKS
@@ -874,7 +875,7 @@ module VMC::Cli::Command
         end
 
         count += 1
-        if count > GIVEUP_TICKS # 2 minutes
+        if count > giveup_ticks
           display "\nApplication is taking too long to start, check your logs".yellow
           break
         end
