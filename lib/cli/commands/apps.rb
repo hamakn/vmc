@@ -948,6 +948,8 @@ module VMC::Cli::Command
 
       if ignore_framework
         framework = VMC::Cli::Framework.new
+      elsif @options[:framework]
+        framework = VMC::Cli::Framework.new(@options[:framework])
       elsif f = info(:framework)
         info = Hash[f["info"].collect { |k, v| [k.to_sym, v] }]
 
