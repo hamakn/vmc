@@ -949,6 +949,8 @@ module VMC::Cli::Command
 
       if ignore_framework
         framework = VMC::Cli::Framework.new
+      elsif @options[:framework]
+        framework = VMC::Cli::Framework.new(@options[:framework])
       elsif f = info(:framework)
         info = Hash[f["info"].collect { |k, v| [k.to_sym, v] }]
 
@@ -1027,7 +1029,7 @@ module VMC::Cli::Command
       if @app_info && services = @app_info["services"]
         services.each do |name, info|
           unless existing.include? name
-            create_service_banner(info["type"], name, true)
+            create_service_banner(info["type"], name, true, info["plan"])
           end
 
           bind_service_banner(name, appname)

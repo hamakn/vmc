@@ -25,11 +25,19 @@ describe 'VMC::Cli::Runner' do
     cli.options[:password].should == 'foo'
   end
 
-  it 'should parse name and bind args correctly' do
-    args = "--name foo --bind bar"
+  it 'should parse name/bind/plan args correctly' do
+    args = "--name foo --bind bar --plan free"
     cli = VMC::Cli::Runner.new(args.split).parse_options!
     cli.options[:name].should == 'foo'
     cli.options[:bind].should == 'bar'
+    cli.options[:plan].should == 'free'
+  end
+
+  it 'should parse name/plan args correctly' do
+    args = "--name foo --plan free"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:name].should == 'foo'
+    cli.options[:plan].should == 'free'
   end
 
   it 'should parse instances and instance into a number and string' do
@@ -108,4 +116,16 @@ describe 'VMC::Cli::Runner' do
     cli = VMC::Cli::Runner.new(args.split).parse_options!
     cli.options[:timeout].should == 234
   end
+
+  it 'should parse framework override correctly' do
+    cli = VMC::Cli::Runner.new().parse_options!
+    cli.options[:framework].should_not be
+    args = "--framework rails3"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:framework].should == "rails3"
+    args = "-f java_web_resin"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:framework].should == "java_web_resin"
+  end
+
 end
