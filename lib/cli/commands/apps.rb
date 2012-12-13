@@ -852,6 +852,7 @@ module VMC::Cli::Command
       count = log_lines_displayed = 0
       failed = false
       start_time = Time.now.to_i
+      giveup_ticks = @options[:timeout] ? @options[:timeout]/SLEEP_TIME : GIVEUP_TICKS
 
       loop do
         display '.', false unless count > TICKER_TICKS
@@ -874,7 +875,7 @@ module VMC::Cli::Command
         end
 
         count += 1
-        if count > GIVEUP_TICKS # 2 minutes
+        if count > giveup_ticks
           display "\nApplication is taking too long to start, check your logs".yellow
           break
         end
@@ -948,6 +949,8 @@ module VMC::Cli::Command
 
       if ignore_framework
         framework = VMC::Cli::Framework.new
+      elsif @options[:framework]
+        framework = VMC::Cli::Framework.new(@options[:framework])
       elsif f = info(:framework)
         info = Hash[f["info"].collect { |k, v| [k.to_sym, v] }]
 
@@ -1026,7 +1029,7 @@ module VMC::Cli::Command
       if @app_info && services = @app_info["services"]
         services.each do |name, info|
           unless existing.include? name
-            create_service_banner(info["type"], name, true)
+            create_service_banner(info["type"], name, true, info["plan"])
           end
 
           bind_service_banner(name, appname)

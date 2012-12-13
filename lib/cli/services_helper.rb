@@ -12,14 +12,18 @@ module VMC::Cli
       services.each do |service_type, value|
         value.each do |vendor, version|
           version.each do |version_str, service|
-            displayed_services << [ vendor, version_str, service[:description] ]
+            plans_str = ""
+            plans_str = service[:tiers].keys.join(', ') if service[:tiers]
+            default_plan = service[:default_plan] ? service[:default_plan] : ""
+            plans_str.sub!(/#{default_plan}/, "#{default_plan}(default)") unless default_plan.empty?
+            displayed_services << [ vendor, version_str, plans_str, service[:description] ]
           end
         end
       end
       displayed_services.sort! { |a, b| a.first.to_s <=> b.first.to_s}
 
       services_table = table do |t|
-        t.headings = 'Service', 'Version', 'Description'
+        t.headings = 'Service', 'Version', 'Plans', 'Description'
         displayed_services.each { |s| t << s }
       end
       display services_table
@@ -34,18 +38,18 @@ module VMC::Cli
     def display_provisioned_services_table(services)
       return unless services && !services.empty?
       services_table = table do |t|
-        t.headings = 'Name', 'Service'
+        t.headings = 'Name', 'Service', 'Plan'
         services.each do |service|
-          t << [ service[:name], service[:vendor] ]
+          t << [ service[:name], service[:vendor], service[:tier] ]
         end
       end
       display services_table
     end
 
-    def create_service_banner(service, name, display_name=false)
+    def create_service_banner(service, name, display_name=false, plan=nil)
       sn = " [#{name}]" if display_name
       display "Creating Service#{sn}: ", false
-      client.create_service(service, name)
+      client.create_service(service, name, plan)
       display 'OK'.green
     end
 
@@ -78,6 +82,20 @@ module VMC::Cli
       app = client.app_info(appname)
       cmd = VMC::Cli::Command::Apps.new(@options)
       cmd.restart(appname) if app[:state] == 'STARTED'
+    end
+
+    def service_plans(service, services_info=nil)
+      services_info ||= client.services_info
+      services_info.values.map { |subset1|
+        subset1.select { |service_name|
+          service_name == service.to_sym
+       }
+       .values.map { |subset2|
+         subset2.values.map { |service_details|
+           service_details[:tiers].keys.map(&:to_s)
+         }
+       }
+      }.flatten
     end
 
   end

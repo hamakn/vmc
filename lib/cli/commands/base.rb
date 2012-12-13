@@ -188,6 +188,7 @@ module VMC::Cli
         @client = VMC::Client.new(target_url, auth_token)
         @client.trace = VMC::Cli::Config.trace if VMC::Cli::Config.trace
         @client.proxy_for @options[:proxy] if @options[:proxy]
+        @client.timeout = @options[:timeout]
         @client
       end
 

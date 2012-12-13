@@ -39,6 +39,7 @@ Currently available vmc commands are:
     push [appname] --instances <N>               Set the expected number <N> of instances
     push [appname] --mem M                       Set the memory reservation for the application
     push [appname] --runtime RUNTIME             Set the runtime to use for the application
+    push [appname] --framework Framework         Set the framework to use for the application
     push [appname] --debug [MODE]                Push application and start in a debug mode
     push [appname] --no-start                    Do not auto-start the application
 
@@ -73,6 +74,7 @@ Currently available vmc commands are:
     create-service <service> [--name,--bind]     Create a provisioned service
     create-service <service> <name>              Create a provisioned service and assign it <name>
     create-service <service> <name> <app>        Create a provisioned service and assign it <name>, and bind to <app>
+    create-service <service> <name> <app> <plan> Create a provisioned service on specified plan and assign it <name>, and bind to <app>
     delete-service [servicename]                 Delete a provisioned service
     bind-service <servicename> <appname>         Bind a service to an application
     unbind-service <servicename> <appname>       Unbind service from the application
@@ -109,6 +111,9 @@ Currently available vmc commands are:
   Help
     help [command]                               Get general help or help on a specific command
     help options                                 Get help on available options
+
+  Timeout
+    * --timeout timeout                          Set the timeout seconds for any requests
 USAGE
 
   end

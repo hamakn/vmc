@@ -22,7 +22,7 @@ class VMC::Client
   end
 
   attr_reader   :target, :host, :user, :proxy, :auth_token
-  attr_accessor :trace
+  attr_accessor :trace, :timeout
 
   # Error codes
   VMC_HTTP_ERROR_CODES = [ 400, 500 ]
@@ -167,19 +167,23 @@ class VMC::Client
     json_get(VMC::SERVICES_PATH)
   end
 
-  def create_service(service, name)
+  def create_service(service, name, plan=nil)
     check_login_status
     services = services_info
     services ||= []
     service_hash = nil
 
     service = service.to_s
+    service_plans = []
+    default_plan = nil
 
     # FIXME!
     services.each do |service_type, value|
       value.each do |vendor, version|
         version.each do |version_str, service_descr|
           if service == service_descr[:vendor]
+            service_plans = service_descr[:tiers].keys.map{|plan_name| plan_name.to_s} if service_descr[:tiers]
+            default_plan = service_descr[:default_plan]
             service_hash = {
               :type => service_descr[:type], :tier => 'free',
               :vendor => service, :version => version_str
@@ -191,6 +195,9 @@ class VMC::Client
     end
 
     raise TargetError, "Service [#{service}] is not a valid service choice" unless service_hash
+    plan = default_plan || 'free' if plan.nil? || plan.empty?
+    service_hash[:tier] = plan
+    raise TargetError, "Please specify a plan in (#{service_plans.join(', ')})" if service_plans.size > 0 && (! service_plans.include? plan)
     service_hash[:name] = name
     json_post(path(VMC::SERVICES_PATH), service_hash)
   end
@@ -383,6 +390,7 @@ class VMC::Client
       :method => method, :url => "#{@target}/#{path}",
       :payload => payload, :headers => headers, :multipart => true
     }
+    req.merge!({:timeout => @timeout}) if @timeout
     status, body, response_headers = perform_http_request(req)
 
     if request_failed?(status)
@@ -409,6 +417,7 @@ class VMC::Client
       req[:headers]['X-VCAP-Trace'] = (trace == true ? '22' : trace)
     end
 
+    start_at = Time.now
     result = nil
     RestClient::Request.execute(req) do |response, request|
       result = [ response.code, response.body, response.headers ]
@@ -430,6 +439,8 @@ class VMC::Client
         puts '<<<'
       end
     end
+    # info: Print response sec if it's over 30sec
+    puts "INFO: Took #{Time.now - start_at} sec for request" if Time.now - start_at > 30
     result
   rescue Net::HTTPBadResponse => e
     raise BadTarget "Received bad HTTP response from target: #{e}"
