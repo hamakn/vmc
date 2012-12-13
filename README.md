@@ -24,16 +24,19 @@ MIT license, please see the LICENSE file.  All rights reserved._
       push [appname] --url                         Set the url for the application
       push [appname] --instances <N>               Set the expected number <N> of instances
       push [appname] --mem M                       Set the memory reservation for the application
+      push [appname] --runtime RUNTIME             Set the runtime to use for the application
+      push [appname] --framework Framework         Set the framework to use for the application
+      push [appname] --debug [MODE]                Push application and start in a debug mode
       push [appname] --no-start                    Do not auto-start the application
 
     Application Operations
-      start <appname>                              Start the application
+      start <appname> [--debug [MODE]]             Start the application
       stop  <appname>                              Stop the application
-      restart <appname>                            Restart the application
+      restart <appname> [--debug [MODE]]           Restart the application
       delete <appname>                             Delete the application
 
     Application Updates
-      update <appname> [--path]                    Update the application bits
+      update <appname> [--path,--debug [MODE]]     Update the application bits
       mem <appname> [memsize]                      Update the memory reservation for an application
       map <appname> <url>                          Register the application to the url
       unmap <appname> <url>                        Unregister the application from the url
@@ -43,7 +46,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       crashes <appname>                            List recent application crashes
       crashlogs <appname>                          Display log information for crashed applications
       logs <appname> [--all]                       Display log information for the application
-      files <appname> [path] [--all]               Display directory listing or file download for path
+      files <appname> [path] [--all]               Display directory listing or file download for [path]
       stats <appname>                              Display resource usage for the application
       instances <appname>                          List application instances
 
@@ -56,6 +59,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       services                                     Lists of services available and provisioned
       create-service <service> [--name,--bind]     Create a provisioned service
       create-service <service> <name>              Create a provisioned service and assign it <name>
+      create-service <service> <name> <app>        Create a provisioned service and assign it <name>, and bind to <app>
       create-service <service> <name> <app> <plan> Create a provisioned service on specified plan and assign it <name>, and bind to <app>
       delete-service [servicename]                 Delete a provisioned service
       bind-service <servicename> <appname>         Bind a service to an application
@@ -69,7 +73,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       passwd                                       Change the password for the current user
       logout                                       Logs current user out of the target system
       add-user [--email, --passwd]                 Register a new user (requires admin privileges)
-      delete-user <user>                            Delete a user and all apps and services (requires admin privileges)
+      delete-user <user>                           Delete a user and all apps and services (requires admin privileges)
 
     System
       runtimes                                     Display the supported runtimes of the target system
@@ -77,7 +81,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
 
     Micro Cloud Foundry
       micro status                                 Display Micro Cloud Foundry VM status
-      mciro offline                                Configure Micro Cloud Foundry VM for offline mode
+      micro offline                                Configure Micro Cloud Foundry VM for offline mode
       micro online                                 Configure Micro Cloud Foundry VM for online mode
         [--vmx file]                               Path to micro.vmx
         [--vmrun executable]                       Path to vmrun executable
@@ -93,6 +97,9 @@ MIT license, please see the LICENSE file.  All rights reserved._
     Help
       help [command]                               Get general help or help on a specific command
       help options                                 Get help on available options
+
+    Timeout
+      * --timeout timeout                          Set the timeout seconds for any requests
 
 ## Simple Story (for Ruby apps)
 

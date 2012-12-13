@@ -39,6 +39,7 @@ Currently available vmc commands are:
     push [appname] --instances <N>               Set the expected number <N> of instances
     push [appname] --mem M                       Set the memory reservation for the application
     push [appname] --runtime RUNTIME             Set the runtime to use for the application
+    push [appname] --framework Framework         Set the framework to use for the application
     push [appname] --debug [MODE]                Push application and start in a debug mode
     push [appname] --no-start                    Do not auto-start the application
 
@@ -110,6 +111,9 @@ Currently available vmc commands are:
   Help
     help [command]                               Get general help or help on a specific command
     help options                                 Get help on available options
+
+  Timeout
+    * --timeout timeout                          Set the timeout seconds for any requests
 USAGE
 
   end
