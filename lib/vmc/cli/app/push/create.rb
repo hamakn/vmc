@@ -22,7 +22,7 @@ module VMC::App
         inputs[:command] = input[:command] if can_have_custom_start_command?(framework)
       end
 
-      inputs[:buildpack] = input[:buildpack] if v2?
+      inputs[:buildpack] = input[:buildpack]
 
       human_mb = human_mb(detector.suggested_memory(framework) || 64)
       inputs[:memory] = megabytes(input[:memory, human_mb])
